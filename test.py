@@ -38,11 +38,13 @@ app.layout = html.Div(children=[
         marks={str(dead): str(dead) for dead in df['DEAD'].unique()},
         step=None
     ),
+    html.Div(id='slider-output-container'),
     dcc.Graph(id='bar-chart')
 ])
 
 @app.callback(
-    Output('bar-chart', 'figure'),
+    [Output('bar-chart', 'figure'),
+     Output('slider-output-container', 'children')],
     [Input('vehicle-dropdown', 'value'),
      Input('age-dropdown', 'value'),
      Input('fatality-slider', 'value')]
@@ -62,10 +64,7 @@ def update_graph(selected_vehicle_types, selected_age_groups, selected_fatalitie
             'title': 'Accidents by City',
             'height': 20000,
             'xaxis': {'range': [0, df.groupby('CITY').size().max()]},
-
-            
         }
-    }
-
+    }, f"Current range of fatalities: {selected_fatalities_range[0]} - {selected_fatalities_range[1]}"
 if __name__ == '__main__':
     app.run_server(debug=True)
